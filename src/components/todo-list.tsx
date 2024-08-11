@@ -37,7 +37,6 @@ function TodoListItemDelete(props: TodoProps) {
   const { onDeleteTodo } = useTodos();
 
   const handleDelete = () => {
-    console.log("handleDelete");
     onDeleteTodo(id);
   };
 
