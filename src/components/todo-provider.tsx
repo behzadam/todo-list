@@ -16,6 +16,7 @@ type Context = {
   onClearCompletedTodos: () => void;
   onFilterTodos: (filter: "all" | "done") => void;
   onSortTodos: (sort: "asc" | "desc") => void;
+  onReorderTodos: (fromIndex: number, toIndex: number) => void;
 };
 
 const TodoContext = createContext<Context>({} as Context);
@@ -82,6 +83,13 @@ function TodoProvider({ children }: PropsWithChildren) {
       updateLocalStorage(sortedTodos);
     };
 
+    const onReorderTodos = (fromIndex: number, toIndex: number) => {
+      const updatedTodos = [...todos];
+      const [removed] = updatedTodos.splice(fromIndex, 1);
+      updatedTodos.splice(toIndex, 0, removed);
+      updateLocalStorage(updatedTodos);
+    };
+
     return {
       todos,
       onAddTodo,
@@ -90,6 +98,7 @@ function TodoProvider({ children }: PropsWithChildren) {
       onClearCompletedTodos,
       onFilterTodos,
       onSortTodos,
+      onReorderTodos,
     };
   }, [todos]);
 

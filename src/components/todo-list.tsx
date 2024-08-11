@@ -1,5 +1,6 @@
 import { formatDateShort } from "@/lib/utils";
 import { Todo } from "@/types/todo";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Trash2 } from "lucide-react";
 import { useTodos } from "./todo-provider";
 import {
@@ -63,36 +64,61 @@ function TodoListItemDelete(props: TodoProps) {
   );
 }
 
-function TodoListItem(props: TodoProps) {
-  const { text, createdAt } = props;
+function TodoListItem(props: { index: number } & TodoProps) {
+  const { text, id, createdAt, index } = props;
+
   return (
-    <li className="flex justify-between items-center border rounded-md p-4">
-      <div>
-        <p className="text-sm">{text}</p>
-        <time className="text-xs text-muted-foreground">
-          {formatDateShort(createdAt.toString())}
-        </time>
-      </div>
-      <div className="flex items-center space-x-4">
-        <TodoListItemToggle {...props} />
-        <TodoListItemDelete {...props} />
-      </div>
-    </li>
+    <Draggable index={index} key={id} draggableId={`${id}`}>
+      {(draggableProvider) => (
+        <li
+          ref={draggableProvider.innerRef}
+          {...draggableProvider.draggableProps}
+          {...draggableProvider.dragHandleProps}
+          className="flex justify-between items-center border rounded-md p-4"
+        >
+          <div>
+            <p className="text-sm">{text}</p>
+            <time className="text-xs text-muted-foreground">
+              {formatDateShort(createdAt.toString())}
+            </time>
+          </div>
+          <div className="flex items-center space-x-4">
+            <TodoListItemToggle {...props} />
+            <TodoListItemDelete {...props} />
+          </div>
+        </li>
+      )}
+    </Draggable>
   );
 }
 
 function TodoList() {
-  const { todos } = useTodos();
+  const { todos, onReorderTodos } = useTodos();
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    const startIndex = result.source.index;
+    const endIndex = result.destination.index;
+    onReorderTodos(startIndex, endIndex);
+  };
+
   return (
-    <ul className="flex flex-col w-full gap-2">
-      {todos?.length > 0 ? (
-        todos.map((todo) => <TodoListItem key={todo.id} {...todo} />)
-      ) : (
-        <p className="rounded-md p-2 text-center dark:text-slate-600">
-          No todos
-        </p>
-      )}
-    </ul>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="todos">
+        {(droppableProvider) => (
+          <ul
+            ref={droppableProvider.innerRef}
+            {...droppableProvider.droppableProps}
+            className="flex flex-col space-y-2"
+          >
+            {todos.map((todo, index) => (
+              <TodoListItem key={todo.id} index={index} {...todo} />
+            ))}
+            {droppableProvider.placeholder}
+          </ul>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 }
 
