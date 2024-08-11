@@ -48,12 +48,12 @@ function TodoToolbarFilter() {
   const { onFilterTodos } = useTodos();
 
   const handleFilter = () => {
-    if (filter === "done") {
-      setFilter("all");
-      onFilterTodos("done");
-    }
     if (filter === "all") {
       setFilter("done");
+      onFilterTodos("done");
+    }
+    if (filter === "done") {
+      setFilter("all");
       onFilterTodos("all");
     }
   };
@@ -76,7 +76,6 @@ function TodoToolbarSort() {
   const [sort, setSort] = useState<"asc" | "desc">("asc");
   const { onSortTodos } = useTodos();
   const handleSort = () => {
-    console.log("handleSort");
     if (sort === "asc") {
       setSort("desc");
       onSortTodos("desc");
