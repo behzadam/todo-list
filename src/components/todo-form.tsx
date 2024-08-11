@@ -9,9 +9,12 @@ export default function TodoForm() {
   const [text, setText] = useState("");
   const { onAddTodo } = useTodos();
 
+  // I ❤️ React Form Hooks and we can use it here
+  // I just want to simpify the code a bit
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (text.trim() === "") return;
+
     const now = new Date();
     const newTodo: Todo = {
       id: generateUUID(),
@@ -31,7 +34,9 @@ export default function TodoForm() {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <Button type="submit">Add Todo</Button>
+        <Button type="submit" disabled={text.trim() === ""}>
+          Add Todo
+        </Button>
       </div>
     </form>
   );
