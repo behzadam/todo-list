@@ -13,19 +13,24 @@ type Context = {
   onAddTodo: (todo: Todo) => void;
   onDeleteTodo: (todoId: string) => void;
   onToggleTodo: (todoId: string) => void;
+  onClearCompletedTodos: () => void;
+  onFilterTodos: (filter: "all" | "done") => void;
+  onSortTodos: (sort: "asc" | "desc") => void;
 };
 
 const TodoContext = createContext<Context>({} as Context);
+
+const loadTodos = (): Todo[] => {
+  const todos = localStorage.getItem("todo");
+  return todos ? JSON.parse(todos) : [];
+};
 
 function TodoProvider({ children }: PropsWithChildren) {
   const [todos, setTodos] = useState<Todo[]>([] as Todo[]);
 
   useEffect(() => {
-    const storedTodos = localStorage.getItem("todo");
-    if (storedTodos) {
-      const stored = JSON.parse(storedTodos);
-      setTodos(stored);
-    }
+    const storedTodos = loadTodos();
+    setTodos(storedTodos);
   }, []);
 
   const updateLocalStorage = (todos: Todo[]) => {
@@ -53,11 +58,38 @@ function TodoProvider({ children }: PropsWithChildren) {
       updateLocalStorage(updatedTodos);
     };
 
+    const onClearCompletedTodos = () => {
+      const updatedTodos = todos.filter((item) => item.completed !== true);
+      updateLocalStorage(updatedTodos);
+    };
+
+    const onFilterTodos = (filter: "all" | "done") => {
+      if (filter === "done") {
+        const updatedTodos = todos.filter((item) => item.completed === true);
+        setTodos(updatedTodos);
+      } else {
+        const storedTodos = loadTodos();
+        setTodos(storedTodos);
+      }
+    };
+
+    const onSortTodos = (sort: "asc" | "desc") => {
+      const sortedTodos = [...todos].sort((a, b) => {
+        let dateA = new Date(a.createdAt).getTime();
+        let dateB = new Date(b.createdAt).getTime();
+        return sort === "asc" ? dateA - dateB : dateB - dateA;
+      });
+      updateLocalStorage(sortedTodos);
+    };
+
     return {
       todos,
       onAddTodo,
       onDeleteTodo,
       onToggleTodo,
+      onClearCompletedTodos,
+      onFilterTodos,
+      onSortTodos,
     };
   }, [todos]);
 

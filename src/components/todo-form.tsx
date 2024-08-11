@@ -17,7 +17,7 @@ export default function TodoForm() {
       id: generateUUID(),
       text: text,
       completed: false,
-      createdAt: now.toLocaleString(),
+      createdAt: now,
     };
     onAddTodo(newTodo);
     setText("");

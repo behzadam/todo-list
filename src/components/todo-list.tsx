@@ -1,6 +1,18 @@
 import { formatDateShort } from "@/lib/utils";
 import { Todo } from "@/types/todo";
+import { Trash2 } from "lucide-react";
 import { useTodos } from "./todo-provider";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 
@@ -9,7 +21,7 @@ type TodoProps = Todo;
 function TodoListItemToggle(props: TodoProps) {
   const { id, completed } = props;
   const { onToggleTodo } = useTodos();
-  
+
   const handleToggle = () => {
     onToggleTodo(id);
   };
@@ -29,25 +41,25 @@ function TodoListItemDelete(props: TodoProps) {
   };
 
   return (
-    <Button variant="ghost" size="icon" onClick={handleDelete}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M3 6h18" />
-        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-        <line x1="10" x2="10" y1="11" y2="17" />
-        <line x1="14" x2="14" y1="11" y2="17" />
-      </svg>
-    </Button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Trash2 size={16} />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            his will permanently delete your TODO
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -58,7 +70,7 @@ function TodoListItem(props: TodoProps) {
       <div>
         <p className="text-sm">{text}</p>
         <time className="text-xs text-muted-foreground">
-          {formatDateShort(createdAt)}
+          {formatDateShort(createdAt.toString())}
         </time>
       </div>
       <div className="flex items-center space-x-4">
@@ -73,9 +85,13 @@ function TodoList() {
   const { todos } = useTodos();
   return (
     <ul className="flex flex-col w-full gap-2">
-      {todos?.map((todo) => (
-        <TodoListItem key={todo.id} {...todo} />
-      ))}
+      {todos?.length > 0 ? (
+        todos.map((todo) => <TodoListItem key={todo.id} {...todo} />)
+      ) : (
+        <p className="rounded-md p-2 text-center dark:text-slate-600">
+          No todos
+        </p>
+      )}
     </ul>
   );
 }
