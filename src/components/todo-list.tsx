@@ -102,7 +102,7 @@ function TodoList() {
     onReorderTodos(startIndex, endIndex);
   };
 
-  return (
+  return todos?.length > 0 ? (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="todos">
         {(droppableProvider) => (
@@ -119,6 +119,10 @@ function TodoList() {
         )}
       </Droppable>
     </DragDropContext>
+  ) : (
+    <div className="flex items-center justify-center">
+      <p className="text-sm text-muted-foreground">No todos found</p>
+    </div>
   );
 }
 
