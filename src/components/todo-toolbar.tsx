@@ -1,5 +1,5 @@
 import { ArrowUpDown, LayoutList, ListChecks, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTodos } from "./todo-provider";
 import {
   AlertDialog,
@@ -15,15 +15,26 @@ import {
 import { Button } from "./ui/button";
 
 function TodoToolbarClear() {
-  const { onClearCompletedTodos } = useTodos();
+  const [anyItemSelected, setAnyItemSelected] = useState(false);
+  const { onClearCompletedTodos, todos } = useTodos();
   const handleClear = () => {
     onClearCompletedTodos();
   };
 
+  useEffect(() => {
+    const anyCompletedItemSelected = todos.some((todo) => todo.completed);
+    setAnyItemSelected(anyCompletedItemSelected);
+  }, [todos]);
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Clear completed TODOs"
+          disabled={!anyItemSelected}
+        >
           <Trash2 size={16} />
         </Button>
       </AlertDialogTrigger>
