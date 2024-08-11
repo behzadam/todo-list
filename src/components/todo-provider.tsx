@@ -67,8 +67,13 @@ function TodoProvider({ children }: PropsWithChildren) {
     const onFilterTodos = (filter: "all" | "done") => {
       if (filter === "done") {
         const updatedTodos = todos.filter((item) => item.completed === true);
-        setTodos(updatedTodos);
-      } else {
+        if (updatedTodos.length > 0) {
+          // Just in memory, not in local storage
+          setTodos(updatedTodos);
+        }
+      }
+      if (filter === "all") {
+        // Reload all from local storage
         const storedTodos = loadTodos();
         setTodos(storedTodos);
       }
@@ -80,7 +85,8 @@ function TodoProvider({ children }: PropsWithChildren) {
         let dateB = new Date(b.createdAt).getTime();
         return sort === "asc" ? dateA - dateB : dateB - dateA;
       });
-      updateLocalStorage(sortedTodos);
+      // Just in memory, not in local storage
+      setTodos(sortedTodos);
     };
 
     const onReorderTodos = (fromIndex: number, toIndex: number) => {
