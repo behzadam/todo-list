@@ -56,7 +56,7 @@ function TodoToolbarClear() {
 
 function TodoToolbarFilter() {
   const [filter, setFilter] = useState<"all" | "done">("all");
-  const { onFilterTodos } = useTodos();
+  const { onFilterTodos, todos } = useTodos();
 
   const handleFilter = () => {
     if (filter === "all") {
@@ -72,7 +72,12 @@ function TodoToolbarFilter() {
   return (
     <div className="flex flex-row items-center gap-1">
       <span className="dark:text-slate-500">Filter:</span>
-      <Button variant="ghost" size="icon" onClick={handleFilter}>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleFilter}
+        disabled={todos.length === 0}
+      >
         {filter === "all" ? (
           <LayoutList size={16} />
         ) : (
@@ -85,7 +90,7 @@ function TodoToolbarFilter() {
 
 function TodoToolbarSort() {
   const [sort, setSort] = useState<"asc" | "desc">("asc");
-  const { onSortTodos } = useTodos();
+  const { onSortTodos, todos } = useTodos();
   const handleSort = () => {
     if (sort === "asc") {
       setSort("desc");
@@ -99,7 +104,12 @@ function TodoToolbarSort() {
   return (
     <div className="flex flex-row items-center gap-1">
       <span className="dark:text-slate-500">Sort:</span>
-      <Button variant="ghost" size="icon" onClick={handleSort}>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleSort}
+        disabled={todos.length === 0}
+      >
         <ArrowUpDown size={16} />
       </Button>
     </div>
