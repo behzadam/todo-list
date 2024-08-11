@@ -19,7 +19,9 @@ export function cn(...inputs: ClassValue[]) {
  * @param dateString the given full date
  * @returns for example: Aug 11, 2024
  */
-export function formatDateShort(dateString: string) {
+export function formatDateShort(dateString?: string | null) {
+  if (!dateString) return "";
+
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
