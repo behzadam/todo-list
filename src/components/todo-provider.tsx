@@ -1,4 +1,3 @@
-import { generateUUID } from "@/lib/utils";
 import { Todo } from "@/types/todo";
 import {
   createContext,
@@ -11,9 +10,9 @@ import {
 
 type Context = {
   todos: Todo[];
-  onAddTodo: (todo: string) => void;
-  onDeleteTodo: (taskId: string) => void;
-  onToggleTodo: (taskId: string) => void;
+  onAddTodo: (todo: Todo) => void;
+  onDeleteTodo: (todoId: string) => void;
+  onToggleTodo: (todoId: string) => void;
 };
 
 const TodoContext = createContext<Context>({} as Context);
@@ -35,30 +34,23 @@ function TodoProvider({ children }: PropsWithChildren) {
   };
 
   const value = useMemo(() => {
-    const onAddTodo = (text: string) => {
-      if (text.trim() === "") return;
-      const newTodo: Todo = {
-        id: generateUUID(),
-        text: text,
-        completed: false,
-        creaedAt: Date.now().toString(),
-      };
+    const onAddTodo = (newTodo: Todo) => {
       updateLocalStorage([...todos, newTodo]);
     };
 
-    const onDeleteTodo = (taskId: string) => {
-      const updatedTodos = todos.filter((item) => item.id !== taskId);
+    const onDeleteTodo = (todoId: string) => {
+      const updatedTodos = todos.filter((item) => item.id !== todoId);
       updateLocalStorage(updatedTodos);
     };
 
-    const onToggleTodo = (taskId: string) => {
+    const onToggleTodo = (todoId: string) => {
       const updatedTodos = todos.map((item) => {
-        if (item.id === taskId) {
+        if (item.id === todoId) {
           return { ...item, completed: !item.completed };
         }
         return item;
       });
-      setTodos(updatedTodos);
+      updateLocalStorage(updatedTodos);
     };
 
     return {

@@ -1,3 +1,5 @@
+import { generateUUID } from "@/lib/utils";
+import { Todo } from "@/types/todo";
 import { useState } from "react";
 import { useTodos } from "./todo-provider";
 import { Button } from "./ui/button";
@@ -10,7 +12,14 @@ export default function TodoForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (text.trim() === "") return;
-    onAddTodo(text);
+    const now = new Date();
+    const newTodo: Todo = {
+      id: generateUUID(),
+      text: text,
+      completed: false,
+      createdAt: now.toLocaleString(),
+    };
+    onAddTodo(newTodo);
     setText("");
   };
 

@@ -8,7 +8,7 @@ import TodoToolbar from "./todo-toolbar";
 export default function TodoConteiner() {
   return (
     <TodoProvider>
-      <div className="flex flex-col gap-4 w-full max-w-lg">
+      <div className="flex flex-col gap-4 w-full max-w-lg px-2">
         <TodoForm />
         <TodoToolbar />
         <TodoList />
